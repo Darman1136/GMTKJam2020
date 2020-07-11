@@ -18,15 +18,14 @@ const FName ATwinPawn::MoveRightBinding("MoveRight");
 const FName ATwinPawn::FireForwardBinding("FireForward");
 const FName ATwinPawn::FireRightBinding("FireRight");
 
-ATwinPawn::ATwinPawn()
-{	
+ATwinPawn::ATwinPawn() {
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> ShipMesh(TEXT("/Game/TwinStick/Meshes/TwinStickUFO.TwinStickUFO"));
 	// Create the mesh component
 	ShipMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ShipMesh"));
 	RootComponent = ShipMeshComponent;
 	ShipMeshComponent->SetCollisionProfileName(UCollisionProfile::Pawn_ProfileName);
 	ShipMeshComponent->SetStaticMesh(ShipMesh.Object);
-	
+
 	// Cache our sound effect
 	static ConstructorHelpers::FObjectFinder<USoundBase> FireAudio(TEXT("/Game/TwinStick/Audio/TwinStickFire.TwinStickFire"));
 	FireSound = FireAudio.Object;
@@ -52,8 +51,7 @@ ATwinPawn::ATwinPawn()
 	bCanFire = true;
 }
 
-void ATwinPawn::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
-{
+void ATwinPawn::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) {
 	check(PlayerInputComponent);
 
 	// set up gameplay key bindings
@@ -63,8 +61,9 @@ void ATwinPawn::SetupPlayerInputComponent(class UInputComponent* PlayerInputComp
 	//PlayerInputComponent->BindAxis(FireRightBinding);
 }
 
-void ATwinPawn::Tick(float DeltaSeconds)
-{
+void ATwinPawn::Tick(float DeltaSeconds) {
+	Super::Tick(DeltaSeconds);
+
 	// Find movement direction
 	const float ForwardValue = GetInputAxisValue(MoveForwardBinding);
 	const float RightValue = GetInputAxisValue(MoveRightBinding);
@@ -76,44 +75,38 @@ void ATwinPawn::Tick(float DeltaSeconds)
 	const FVector Movement = MoveDirection * MoveSpeed * DeltaSeconds;
 
 	// If non-zero size, move this actor
-	if (Movement.SizeSquared() > 0.0f)
-	{
+	if (Movement.SizeSquared() > 0.0f) {
 		const FRotator NewRotation = Movement.Rotation();
 		FHitResult Hit(1.f);
 		RootComponent->MoveComponent(Movement, NewRotation, true, &Hit);
-		
-		if (Hit.IsValidBlockingHit())
-		{
+
+		if (Hit.IsValidBlockingHit()) {
 			const FVector Normal2D = Hit.Normal.GetSafeNormal2D();
 			const FVector Deflection = FVector::VectorPlaneProject(Movement, Normal2D) * (1.f - Hit.Time);
 			RootComponent->MoveComponent(Deflection, NewRotation, true);
 		}
 	}
-	
-	// Create fire direction vector
-	const float FireForwardValue = GetInputAxisValue(FireForwardBinding);
-	const float FireRightValue = GetInputAxisValue(FireRightBinding);
-	const FVector FireDirection = FVector(FireForwardValue, FireRightValue, 0.f);
 
-	// Try and fire a shot
-	FireShot(FireDirection);
+	//// Create fire direction vector
+	//const float FireForwardValue = GetInputAxisValue(FireForwardBinding);
+	//const float FireRightValue = GetInputAxisValue(FireRightBinding);
+	//const FVector FireDirection = FVector(FireForwardValue, FireRightValue, 0.f);
+
+	//// Try and fire a shot
+	//FireShot(FireDirection);
 }
 
-void ATwinPawn::FireShot(FVector FireDirection)
-{
+void ATwinPawn::FireShot(FVector FireDirection) {
 	// If it's ok to fire again
-	if (bCanFire == true)
-	{
+	if (bCanFire == true) {
 		// If we are pressing fire stick in a direction
-		if (FireDirection.SizeSquared() > 0.0f)
-		{
+		if (FireDirection.SizeSquared() > 0.0f) {
 			const FRotator FireRotation = FireDirection.Rotation();
 			// Spawn projectile at an offset from this pawn
 			const FVector SpawnLocation = GetActorLocation() + FireRotation.RotateVector(GunOffset);
 
 			UWorld* const World = GetWorld();
-			if (World != NULL)
-			{
+			if (World != NULL) {
 				// spawn the projectile
 				World->SpawnActor<ATwinProjectile>(SpawnLocation, FireRotation);
 			}
@@ -122,8 +115,7 @@ void ATwinPawn::FireShot(FVector FireDirection)
 			World->GetTimerManager().SetTimer(TimerHandle_ShotTimerExpired, this, &ATwinPawn::ShotTimerExpired, FireRate);
 
 			// try and play the sound if specified
-			if (FireSound != nullptr)
-			{
+			if (FireSound != nullptr) {
 				UGameplayStatics::PlaySoundAtLocation(this, FireSound, GetActorLocation());
 			}
 
@@ -132,8 +124,7 @@ void ATwinPawn::FireShot(FVector FireDirection)
 	}
 }
 
-void ATwinPawn::ShotTimerExpired()
-{
+void ATwinPawn::ShotTimerExpired() {
 	bCanFire = true;
 }
 

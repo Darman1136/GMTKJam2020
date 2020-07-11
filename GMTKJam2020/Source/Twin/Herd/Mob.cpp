@@ -72,7 +72,7 @@ void AMob::Tick(float DeltaTime) {
 	AvoidCollision(CollisionAvoidance, FVector(-1, -1, 0));
 
 	FVector NewDirection = TowardsCenter + SeparationVector + CollisionAvoidance;
-	UE_LOG(LogTemp, Log, TEXT("%s"), *NewDirection.ToString());
+	//UE_LOG(LogTemp, Log, TEXT("%s"), *NewDirection.ToString());
 	//FVector NewDirection = SeparationVector;
 	//NewDirection /= 2;
 	NewDirection.Normalize();
