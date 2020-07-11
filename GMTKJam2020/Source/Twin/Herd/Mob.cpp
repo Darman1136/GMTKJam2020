@@ -61,15 +61,15 @@ void AMob::Tick(float DeltaTime) {
 
 	FVector CollisionAvoidance = FVector::ZeroVector;
 
-	AvoidCollision(CollisionAvoidance, FVector(1, 0, 0));
-	AvoidCollision(CollisionAvoidance, FVector(-1, 0, 0));
-	AvoidCollision(CollisionAvoidance, FVector(0, 1, 0));
-	AvoidCollision(CollisionAvoidance, FVector(0, -1, 0));
+	//AvoidCollision(CollisionAvoidance, FVector(1, 0, 0));
+	//AvoidCollision(CollisionAvoidance, FVector(-1, 0, 0));
+	//AvoidCollision(CollisionAvoidance, FVector(0, 1, 0));
+	//AvoidCollision(CollisionAvoidance, FVector(0, -1, 0));
 
-	AvoidCollision(CollisionAvoidance, FVector(1, 1, 0));
-	AvoidCollision(CollisionAvoidance, FVector(-1, 1, 0));
-	AvoidCollision(CollisionAvoidance, FVector(1, -1, 0));
-	AvoidCollision(CollisionAvoidance, FVector(-1, -1, 0));
+	//AvoidCollision(CollisionAvoidance, FVector(1, 1, 0));
+	//AvoidCollision(CollisionAvoidance, FVector(-1, 1, 0));
+	//AvoidCollision(CollisionAvoidance, FVector(1, -1, 0));
+	//AvoidCollision(CollisionAvoidance, FVector(-1, -1, 0));
 
 	FVector NewDirection = TowardsCenter + SeparationVector + CollisionAvoidance;
 	//UE_LOG(LogTemp, Log, TEXT("%s"), *NewDirection.ToString());
@@ -82,7 +82,7 @@ void AMob::Tick(float DeltaTime) {
 
 	float SpeedMultiplier = 1.f;
 	if (!Flee) {
-		SpeedMultiplier = UKismetMathLibrary::NormalizeToRange(FVector::Dist(HerdCenterLocation, GetActorLocation()), 0., 300.);
+		SpeedMultiplier = UKismetMathLibrary::NormalizeToRange(FVector::Dist(HerdCenterLocation, GetActorLocation()), 0., 800.);
 	}
 	NewDirection *= MoveSpeed * SpeedMultiplier * DeltaTime;
 	SetActorLocation(GetActorLocation() + NewDirection, true);
