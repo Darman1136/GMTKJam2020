@@ -24,7 +24,7 @@ protected:
 	void AvoidCollision(FVector& CollisionAvoidanceAccumulator, FVector TraceDirection);
 
 	UFUNCTION(BlueprintCallable)
-		bool IsAlive() const { return Alive; };
+		bool IsAlive() const { return bAlive; };
 
 	UFUNCTION(BlueprintCallable)
 		bool IsDeathTriggered() const { return DeathTriggered; };
@@ -34,7 +34,7 @@ public:
 		float MoveSpeed = 320.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float MaxDistance = 400.f;
+		float MaxDistance = 300.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool Flee = false;
@@ -57,7 +57,7 @@ public:
 private:
 	AHerdCenter* HerdCenter;
 
-	bool Alive = true;
+	bool bAlive = true;
 
-
+	APawn* Player;
 };

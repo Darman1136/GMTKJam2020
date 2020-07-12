@@ -3,6 +3,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Engine/World.h"
 #include "DrawDebugHelpers.h"
+#include "GameFramework/Pawn.h"
 
 AMob::AMob() {
 	PrimaryActorTick.bCanEverTick = true;
@@ -16,6 +17,8 @@ void AMob::BeginPlay() {
 	if (FoundCenter) {
 		HerdCenter = Cast<AHerdCenter>(FoundCenter);
 	}
+
+	Player = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
 }
 
 void AMob::Tick(float DeltaTime) {
@@ -53,11 +56,10 @@ void AMob::Tick(float DeltaTime) {
 	SeparationVector.Normalize();
 
 	FVector TowardsCenter = HerdCenterLocation - GetActorLocation();
-	TowardsCenter.Normalize();
-
 	if (Flee) {
-		TowardsCenter *= -1.f;
+		TowardsCenter = TowardsCenter * -1. + (GetActorLocation() - Player->GetActorLocation()) * 2.;
 	}
+	TowardsCenter.Normalize();
 
 	FVector CollisionAvoidance = FVector::ZeroVector;
 
@@ -102,10 +104,7 @@ void AMob::AvoidCollision(FVector& CollisionAvoidanceAccumulator, FVector TraceD
 }
 
 void AMob::Death() {
-	if (Alive) {
-		Alive = false;
-		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), DeathEffect, GetActorLocation(), FRotator::ZeroRotator, FVector(3.f));
-		UGameplayStatics::SpawnSound2D(GetWorld(), DeathSound, .7f);
-		Destroy();
+	if (bAlive) {
+		bAlive = false;
 	}
 }
