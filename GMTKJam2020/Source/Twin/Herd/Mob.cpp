@@ -57,7 +57,7 @@ void AMob::Tick(float DeltaTime) {
 
 	FVector TowardsCenter = HerdCenterLocation - GetActorLocation();
 	if (Flee) {
-		TowardsCenter = TowardsCenter * -1. + (GetActorLocation() - Player->GetActorLocation()) * 2.;
+		TowardsCenter = TowardsCenter * -1. + ((GetActorLocation() - Player->GetActorLocation()) * 2.) * (2. - UKismetMathLibrary::NormalizeToRange(FVector::Dist(GetActorLocation(), Player->GetActorLocation()), 0., 1000.));
 	}
 	TowardsCenter.Normalize();
 
